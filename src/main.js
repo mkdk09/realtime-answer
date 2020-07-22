@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import 'ress'
 import './plugins/element.js'
+import './plugins/firebase'
 
 Vue.config.productionTip = false
 
