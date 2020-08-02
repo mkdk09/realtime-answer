@@ -29,90 +29,90 @@ const selections = db.collection('selections')
 const answers = db.collection('answers')
 
 export default {
-    data () {
-        return {
-            uid: null,
-            questions: []
-        }
-    },
-    async created () {
-        // 匿名認証を行う
-        await auth.signInAnonymously()
-        auth.onAuthStateChanged((user) => {
-            // 取得したUIDを保持
-            this.uid = user.uid
-        })
+  data () {
+    return {
+      uid: null,
+      questions: []
+    }
+  },
+  async created () {
+    // 匿名認証を行う
+    await auth.signInAnonymously()
+    auth.onAuthStateChanged((user) => {
+      // 取得したUIDを保持
+      this.uid = user.uid
+    })
 
-        // dataのquestionsにバインド
-        // note: maxRefDepthをデフォルトの2から変更するため，ここで処理
-        await this.$bind(
-            'questions',
-            activeQuestions,
-            {
-                maxRefDepth: 3
-            }
-        )
-    },
-    computed: {
-        /**
+    // dataのquestionsにバインド
+    // note: maxRefDepthをデフォルトの2から変更するため，ここで処理
+    await this.$bind(
+      'questions',
+      activeQuestions,
+      {
+        maxRefDepth: 3
+      }
+    )
+  },
+  computed: {
+    /**
          * @var Object 問題
          */
-        question: {
-            get () {
-                return (this.questions.length) ? this.questions[0] : null
-            }
-        },
-        /**
+    question: {
+      get () {
+        return (this.questions.length) ? this.questions[0] : null
+      }
+    },
+    /**
          * @var Boolean 回答済みかどうか
          */
-        isAnswered: {
-            get () {
-                if (!this.questions) {
-                    return false
-                }
-                if (this.question.isClosed) {
-                    return true
-                }
-                // note: questionがVueFireで複数回に分けて更新されるため、Objectのチェックを行う
-                for (const selectionRef of this.question.selectionRefs) {
-                    if (typeof selectionRef !== 'object') {
-                        continue
-                    }
-                    for (const answerRef of selectionRef.answerRefs) {
-                        if (typeof answerRef !== 'object') {
-                            continue
-                        }
-                        if (answerRef.uid === this.uid) {
-                            // 自身の回答があれば，回答済み
-                            return true
-                        }
-                    }
-                }
-                return false
-            }
+    isAnswered: {
+      get () {
+        if (!this.questions) {
+          return false
         }
-    },
-    methods: {
-        /**
+        if (this.question.isClosed) {
+          return true
+        }
+        // note: questionがVueFireで複数回に分けて更新されるため、Objectのチェックを行う
+        for (const selectionRef of this.question.selectionRefs) {
+          if (typeof selectionRef !== 'object') {
+            continue
+          }
+          for (const answerRef of selectionRef.answerRefs) {
+            if (typeof answerRef !== 'object') {
+              continue
+            }
+            if (answerRef.uid === this.uid) {
+              // 自身の回答があれば，回答済み
+              return true
+            }
+          }
+        }
+        return false
+      }
+    }
+  },
+  methods: {
+    /**
          * 選択処理
          */
-        async select (event, selection) {
-            // 回答を保存
-            const answerRef = await answers.add({
-                uid: this.uid
-            })
-            // 選択肢に回答を紐付け
-            const selectionRef = await selections.doc(selection.id)
-            await selectionRef.set(
-                {
-                    answerRefs: firebase.firestore.FieldValue.arrayUnion(answerRef)
-                },
-                {
-                    merge: true
-                }
-            )
+    async select (event, selection) {
+      // 回答を保存
+      const answerRef = await answers.add({
+        uid: this.uid
+      })
+      // 選択肢に回答を紐付け
+      const selectionRef = await selections.doc(selection.id)
+      await selectionRef.set(
+        {
+          answerRefs: firebase.firestore.FieldValue.arrayUnion(answerRef)
+        },
+        {
+          merge: true
         }
+      )
     }
+  }
 }
 </script>
 

@@ -47,128 +47,128 @@ const activeQuestions = questions.where('isFinished', '==', false)
 const selections = db.collection('selections')
 
 export default {
-    data () {
-        return {
-            questions: [],
-            edit: {
-                question: {
-                    text: ''
-                },
-                selections: [
-                    {
-                        text: ''
-                    },
-                    {
-                        text: ''
-                    },
-                    {
-                        text: ''
-                    },
-                    {
-                        text: ''
-                    }
-                ]
-            }
-        }
-    },
-    async created () {
-        // dataのquestionsにバインド
-        // note: maxRefDepthをデフォルトの2から変更するため、ここで処理
-        await this.$bind(
-            'questions',
-            activeQuestions,
-            {
-                maxRefDepth: 3
-            }
-        )
-    },
-    computed: {
-        /**
+  data () {
+    return {
+      questions: [],
+      edit: {
+        question: {
+          text: ''
+        },
+        selections: [
+          {
+            text: ''
+          },
+          {
+            text: ''
+          },
+          {
+            text: ''
+          },
+          {
+            text: ''
+          }
+        ]
+      }
+    }
+  },
+  async created () {
+    // dataのquestionsにバインド
+    // note: maxRefDepthをデフォルトの2から変更するため、ここで処理
+    await this.$bind(
+      'questions',
+      activeQuestions,
+      {
+        maxRefDepth: 3
+      }
+    )
+  },
+  computed: {
+    /**
          * @var Object 問題
          */
-        question: {
-            get () {
-                return (this.questions.length) ? this.questions[0] : null
-            }
-        }
-    },
-    methods: {
-        /**
+    question: {
+      get () {
+        return (this.questions.length) ? this.questions[0] : null
+      }
+    }
+  },
+  methods: {
+    /**
          * 保存処理
          */
-        async save (event) {
-            // バリデーション
-            if (!this.edit.question.text) {
-                alert('質問を入力してください')
-                return
-            }
-            let selectionTextJoined = ''
-            for (const selection of this.edit.selections) {
-                selectionTextJoined += selection.text
-            }
-            if (!selectionTextJoined) {
-                alert('選択肢を入力してください')
-                return
-            }
+    async save (event) {
+      // バリデーション
+      if (!this.edit.question.text) {
+        alert('質問を入力してください')
+        return
+      }
+      let selectionTextJoined = ''
+      for (const selection of this.edit.selections) {
+        selectionTextJoined += selection.text
+      }
+      if (!selectionTextJoined) {
+        alert('選択肢を入力してください')
+        return
+      }
 
-            // 保存処理
-            const selectionRefs = []
-            for (const selection of this.edit.selections) {
-                if (!Selection.text) {
-                    continue
-                }
-                // 選択肢保存処理
-                const selectionRef = await selections.add({
-                    text: selection.text,
-                    answerRefs: []
-                })
-                // Refを保持
-                selectionRefs.push(selectionRef)
-            }
-            // 質問保存処理
-            await question.add({
-                text: this.edit.question.text,
-                isFinished: false,
-                isClosed: false,
-                selectionRefs: selectionRef
-            })
-            // 入力値クリア
-            this.edit.question.text = ''
-            for (const index in this.edit.selections) {
-                this.edit.selections[index].text = ''
-            }
-        },
-        /**
+      // 保存処理
+      const selectionRefs = []
+      for (const selection of this.edit.selections) {
+        if (!Selection.text) {
+          continue
+        }
+        // 選択肢保存処理
+        const selectionRef = await selections.add({
+          text: selection.text,
+          answerRefs: []
+        })
+        // Refを保持
+        selectionRefs.push(selectionRef)
+      }
+      // 質問保存処理
+      await questions.add({
+        text: this.edit.question.text,
+        isFinished: false,
+        isClosed: false,
+        selectionRefs: selectionRefs
+      })
+      // 入力値クリア
+      this.edit.question.text = ''
+      for (const index in this.edit.selections) {
+        this.edit.selections[index].text = ''
+      }
+    },
+    /**
          * 回答締め切り処理
          */
-        async close (event, selection) {
-            const questionRef = await questions.doc(this.question.id)
-            // 質問のステータスを更新
-            await questionRef.set(
-                {
-                    isClosed: true
-                },
-                {
-                    merge: true
-                }
-            )
+    async close (event, selection) {
+      const questionRef = await questions.doc(this.question.id)
+      // 質問のステータスを更新
+      await questionRef.set(
+        {
+          isClosed: true
         },
-        /**
+        {
+          merge: true
+        }
+      )
+    },
+    /**
          * 質問終了処理
          */
-        async finish (event, selection) {
-            // 質問のステータスを更新
-            const questionRef = await questions.doc(this.question.id)
-            await questionRef.set(
-                {
-                    isFinished: true
-                },
-                {
-                    merge: true
-                }
-            )
+    async finish (event, selection) {
+      // 質問のステータスを更新
+      const questionRef = await questions.doc(this.question.id)
+      await questionRef.set(
+        {
+          isFinished: true
+        },
+        {
+          merge: true
         }
+      )
     }
+  }
 }
 </script>
 
@@ -201,4 +201,3 @@ export default {
   margin: 0 auto;
 }
 </style>
-
