@@ -22,3 +22,11 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+Hosting URL: https://realtime-answer-aac8e.web.app
+
+# reference
+
+https://qiita.com/ohnaka0410/items/6e1bc1cdf09cc68050cc
+
+https://qiita.com/azukiazusa/items/edd6ca9cba2d48c4c3e2
