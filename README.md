@@ -23,7 +23,9 @@ yarn lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-Hosting URL: https://realtime-answer-aac8e.web.app
+Hosting User URL: https://realtime-answer-aac8e.web.app
+
+Hosting Administrator URL: https://realtime-answer-aac8e.web.app/admin
 
 # reference
 

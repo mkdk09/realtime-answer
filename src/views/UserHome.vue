@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <el-main v-if="question">
-            <p class="ra-quastion">
+            <p class="ra-question">
                 {{ question.text }}
                 <span v-if="isAnswered">
                     (回答終了)
@@ -67,7 +67,7 @@ export default {
          */
     isAnswered: {
       get () {
-        if (!this.questions) {
+        if (!this.question) {
           return false
         }
         if (this.question.isClosed) {

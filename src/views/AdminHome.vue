@@ -114,7 +114,7 @@ export default {
       // 保存処理
       const selectionRefs = []
       for (const selection of this.edit.selections) {
-        if (!Selection.text) {
+        if (!selection.text) {
           continue
         }
         // 選択肢保存処理
